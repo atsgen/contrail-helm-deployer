@@ -1,0 +1,40 @@
+{{- $context := . }}
+{{- $keystone_auth_host := tuple "keystone" "default" $context | include "helm-toolkit.endpoints.hostname_namespaced_endpoint_lookup" }}
+
+{{- if not .Values.global.tungsten_env_vpp -}}
+{{- $_ := set .Values.global "tungsten_env_vpp" dict -}}
+{{- end -}}
+
+{{- if .Values.manifests.configmap_tungsten_vpp }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tungsten-vpp
+data:
+  {{- range $key, $value := .Values.global.contrail_env }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- range $key, $value := .Values.global.tungsten_env_vpp }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+
+{{- if .Values.manifests.configmap_vrouter_keystone }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tungsten-vpp-keystone
+data:
+  KEYSTONE_AUTH_ADMIN_USER: {{ .Values.endpoints.keystone.auth.username }}
+  KEYSTONE_AUTH_ADMIN_TENANT: {{ .Values.endpoints.keystone.auth.project_name }}
+  KEYSTONE_AUTH_USER_DOMAIN_NAME: {{ .Values.endpoints.keystone.auth.user_domain_name }}
+  KEYSTONE_AUTH_PROJECT_DOMAIN_NAME: {{ .Values.endpoints.keystone.auth.project_domain_name }}
+  KEYSTONE_AUTH_URL_VERSION: {{ .Values.endpoints.keystone.path.default }}
+  KEYSTONE_AUTH_HOST: {{ $keystone_auth_host }}
+  KEYSTONE_AUTH_PROTO: {{ .Values.endpoints.keystone.scheme.default }}
+  KEYSTONE_AUTH_ADMIN_PORT: {{ .Values.endpoints.keystone.port.api.default | quote }}
+  KEYSTONE_AUTH_PUBLIC_PORT: {{ .Values.endpoints.keystone.port.api.default | quote }}
+  KEYSTONE_AUTH_REGION_NAME: {{ .Values.endpoints.keystone.auth.region_name | quote }}
+{{- end }}

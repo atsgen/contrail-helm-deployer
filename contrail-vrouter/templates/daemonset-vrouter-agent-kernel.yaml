@@ -2,7 +2,6 @@
 {{- $_ := set .Values "images" .Values.global.images }}
 {{- $context := . }}
 {{- $dependencies := .Values.dependencies.vrouter_agent_kernel }}
-# host_os is a mandatory field
 {{- $_ := required ".Values.global.node.host_os must be specified, valid values are ubuntu, centos" .Values.global.node.host_os }}
 {{- $host_os := .Values.global.node.host_os }}
 
@@ -37,6 +36,9 @@ spec:
       #Enable tolerations for single node setup
       tolerations:
       - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node.kubernetes.io/not-ready
         operator: Exists
         effect: NoSchedule
       hostNetwork: true

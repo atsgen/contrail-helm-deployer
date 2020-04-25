@@ -1,0 +1,13 @@
+apiVersion: v1
+name: tungsten-vpp
+description: Helm chart for tungsten fabric integrated vpp datapath
+version: 0.1.0
+appVersion: Tungsten Fabric 5.1.1
+home: https://github.com/atsgen/contrail-helm-deployer/
+sources:
+  - https://github.com/atsgen/contrail-controller/
+tillerVersion: ">=2.4.0"
+keywords:
+  - Tungsten Fabric
+  - Contrail
+  - SDN
